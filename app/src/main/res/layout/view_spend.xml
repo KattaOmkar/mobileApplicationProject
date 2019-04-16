@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:text="02/04/2019"
+        android:gravity="center"
+        android:textColor="@android:color/black"
+        android:id="@+id/Sdate"
+        />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:text="200"
+        android:id="@+id/Samount"
+        android:textColor="@android:color/holo_red_dark"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:maxLines="1"
+        android:paddingLeft="5dp"
+        android:text="spent money for buying books: Ratan Tata"
+        android:gravity="center"
+        android:id="@+id/Sreason"
+        android:ellipsize="end"/>
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">BudgetManager</string>
+    <string name="receivings_list">Receivings List</string>
+</resources>

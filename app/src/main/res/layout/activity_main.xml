@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:orientation="vertical"
+    android:paddingTop="200dp"
+    android:paddingLeft="150dp"
+    tools:context=".activity.MainActivity">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spend_button"
+        android:text="Add Spendings"
+        android:layout_marginBottom="10dp"
+        android:background="@android:color/holo_red_light"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/receive_button"
+        android:text="Add Receivings"
+        android:layout_marginBottom="10dp"
+        android:background="@android:color/holo_green_light"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello"
+        android:textColor="@android:color/black"
+        android:textSize="30sp"
+        android:paddingRight="40dp"
+
+        android:layout_marginTop="30dp"
+        android:id="@+id/balance"/>
+
+
+
+</LinearLayout>
