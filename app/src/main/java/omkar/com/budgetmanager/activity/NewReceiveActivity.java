@@ -1,6 +1,8 @@
 package omkar.com.budgetmanager.activity;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
@@ -12,9 +14,11 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import omkar.com.budgetmanager.R;
 import omkar.com.budgetmanager.api.ApiService;
 import omkar.com.budgetmanager.api.ApiServiceFactory;
@@ -25,7 +29,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class NewReceiveActivity extends AppCompatActivity implements View.OnClickListener, Callback<ReceiveResponse> {
+public class NewReceiveActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText mDisplayDate, Reason, Amount;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private Button btReceive;
@@ -82,35 +86,72 @@ public class NewReceiveActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onClick(View v) {
         String date = mDisplayDate.getText().toString();
-        String reason = Reason.getText().toString();
+        String from_reason = Reason.getText().toString();
         String amount = Amount.getText().toString();
 
-        Receive receive = new Receive();
-        receive.setAmount(amount);
-        receive.setDate(date);
-        receive.setFrom_reason(reason);
+        if (date.isEmpty()){
+            mDisplayDate.setError("Please select a date of receiving");
+            mDisplayDate.requestFocus();
+        }
 
-        ReceiveRequest receiveRequest = new ReceiveRequest();
-        receiveRequest.setReceive(receive);
+        if (from_reason.isEmpty()){
+            Reason.setError("Please enter a reason for receiving");
+            Reason.requestFocus();
 
-        apiService.createReceive(receiveRequest).enqueue(this);
+        }
+
+        if (amount.isEmpty()){
+            Amount.setError("Please enter the amount recieved");
+            Amount.requestFocus();
+        }
+
+        if (Amount.equals(0)){
+            Amount.setError("Please enter the valid amount of recieved");
+            Amount.requestFocus();
+        }
+
+//        Receive receive = new Receive();
+//        receive.setAmount(amount);
+//        receive.setDate(date);
+//        receive.setFrom_reason(reason);
+//
+//        ReceiveRequest receiveRequest = new ReceiveRequest();
+//        receiveRequest.setReceive(receive);
+//
+//        apiService.createReceive(receiveRequest).enqueue(this);
+
+        Call<ResponseBody> call = ApiServiceFactory
+                .getInstance()
+                .createApiService()
+                .receiving(date,from_reason,amount);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    String s = response.body().string();
+                    Toast.makeText(NewReceiveActivity.this,s,Toast.LENGTH_LONG).show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(NewReceiveActivity.this,t.getMessage(),Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+        Intent returnIntent = new Intent();
+        setResult(Activity.RESULT_CANCELED, returnIntent);
+        finish();
+
+
 
 
 
     }
 
-    @Override
-    public void onResponse(Call<ReceiveResponse> call, Response<ReceiveResponse> response) {
 
-        //receive = (List<Receive>) response.body().getReceive();
-        Toast.makeText(this,
-                "Created Spend With ID = "+response.body().getReceive().getID(),
-                Toast.LENGTH_SHORT).show();
-
-    }
-
-    @Override
-    public void onFailure(Call<ReceiveResponse> call, Throwable t) {
-        Toast.makeText(this,"Unable to add Receive to the Spend List",Toast.LENGTH_LONG).show();
-    }
 }

@@ -1,6 +1,8 @@
 package omkar.com.budgetmanager.activity;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
@@ -12,9 +14,11 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import omkar.com.budgetmanager.R;
 import omkar.com.budgetmanager.api.ApiService;
 import omkar.com.budgetmanager.api.ApiServiceFactory;
@@ -26,7 +30,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class NewSpendActivity extends AppCompatActivity implements View.OnClickListener, Callback<SpendResponse> {
+public class NewSpendActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText mDisplayDate, Reason, Amount;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private Button btSpend;
@@ -45,9 +49,7 @@ public class NewSpendActivity extends AppCompatActivity implements View.OnClickL
         Amount = findViewById(R.id.amountSpend);
         btSpend = findViewById(R.id.btSpend);
 
-        btSpend.setOnClickListener(this);
 
-        apiService = ApiServiceFactory.createApiService();
 
         mDisplayDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,11 +80,20 @@ public class NewSpendActivity extends AppCompatActivity implements View.OnClickL
             }
         };
 
+
+
+        btSpend.setOnClickListener(this);
+
+        apiService = ApiServiceFactory.createApiService();
+
     }
 
     @Override
     public void onClick(View v){
         submitSpend();
+        Intent returnIntent = new Intent();
+        setResult(Activity.RESULT_CANCELED, returnIntent);
+        finish();
     }
 
 
@@ -90,38 +101,71 @@ public class NewSpendActivity extends AppCompatActivity implements View.OnClickL
     {
 
         String date = mDisplayDate.getText().toString();
-        String reason = Reason.getText().toString();
+
+        Log.d(String.valueOf(this),"value of date is :" + date);
+        final String reason = Reason.getText().toString();
+        Log.d(String.valueOf(this),"value of reason is:" + reason );
         String amount = Amount.getText().toString();
+        Log.d(String.valueOf(this),"value of amount is:" + amount);
 
-        Spend spend = new Spend();
-        spend.setAmount(amount);
-        spend.setDate(date);
-        spend.setReason(reason);
+        if (date.isEmpty()){
+            mDisplayDate.setError("Please select date");
+            mDisplayDate.requestFocus();
 
-        SpendRequest spendRequest = new SpendRequest();
-        spendRequest.setSpend(spend);
+        }
+        if (reason.isEmpty()){
+            Reason.setError("Please enter a Reason for spending");
+            Reason.requestFocus();
+        }
 
-        apiService.createSpend(spendRequest).enqueue(this);
+        if (amount.isEmpty()){
+            Amount.setError("Please enter the amount spended");
+            Amount.requestFocus();
+        }
+
+        if (amount.equals(0)){
+            Amount.setError("Amount value can't be null");
+            Amount.requestFocus();
+        }
+
+//        Spend spend = new Spend();
+//        spend.setAmount(amount);
+//        spend.setDate(date);
+//        spend.setReason(reason);
+//
+//        SpendRequest spendRequest = new SpendRequest();
+//        spendRequest.setSpend(spend);
+//
+//        apiService.createSpend(spendRequest).enqueue(this);
+
+        Call<ResponseBody> call = ApiServiceFactory
+                .getInstance()
+                .createApiService()
+                .spending(date,reason,amount);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    String s = response.body().string();
+                    Toast.makeText(NewSpendActivity.this,s,Toast.LENGTH_LONG).show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(NewSpendActivity.this,t.getMessage(),Toast.LENGTH_LONG).show();
+
+            }
+        });
 
     }
 
-    @Override
-    public void onResponse(Call<SpendResponse> call, Response<SpendResponse> response) {
-//        ArrayList<String> partners = response.body();
-
-//        spend = (List<Spend>) response.body().getSpend();
-        Toast.makeText(this,
-                "Created Spend With ID = "+response.body().getSpend().getID(),
-                Toast.LENGTH_SHORT).show();
-
-        Log.i("get Response",String.valueOf(response.body().getSpend()));
-    }
-
-    @Override
-    public void onFailure(Call<SpendResponse> call, Throwable t) {
-        Toast.makeText(this,"Unable to add Spend to the Spend List",Toast.LENGTH_LONG).show();
 
 
-    }
+
 }
 

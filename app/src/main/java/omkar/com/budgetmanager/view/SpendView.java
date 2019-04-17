@@ -17,10 +17,10 @@ public class SpendView extends FrameLayout {
         initViews();
     }
     public void initViews(){
-        inflate(getContext(), R.layout.view_receive,this);
-        sdateTv =  findViewById(R.id.date);
-        sreasonTv = findViewById(R.id.reason);
-        samountTv = findViewById(R.id.amount);
+        inflate(getContext(), R.layout.view_spend,this);
+        sdateTv =  findViewById(R.id.Sdate);
+        sreasonTv = findViewById(R.id.Sreason);
+        samountTv = findViewById(R.id.Samount);
 
     }
 

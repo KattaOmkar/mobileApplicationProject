@@ -1,5 +1,6 @@
 package omkar.com.budgetmanager.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -50,13 +51,17 @@ public class MainReceive extends AppCompatActivity implements View.OnClickListen
 
         newReceive.setOnClickListener(this);
 
+
+
         fetchReceives();
     }
 
     @Override
     public void onClick(View v) {
-        Intent rec = new Intent(this,NewReceiveActivity.class);
-        startActivity(rec);
+//        Intent rec = new Intent(this,NewReceiveActivity.class);
+//        startActivity(rec);
+        Intent i = new Intent(this, NewReceiveActivity.class);
+        startActivityForResult(i, 1);
 
     }
 
@@ -91,7 +96,7 @@ public class MainReceive extends AppCompatActivity implements View.OnClickListen
             tot = tot + Integer.parseInt(receive.getAmount());
 
         }
-        total.setText(String.valueOf(tot));
+        total.setText("Total:"+String.valueOf(tot));
 
         SharedPreferences sharedPreferences = getSharedPreferences("TotalValues",MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -149,4 +154,17 @@ public class MainReceive extends AppCompatActivity implements View.OnClickListen
 //
 //
 //    }
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+    if (requestCode == 1) {
+
+        if(resultCode == Activity.RESULT_OK){
+            String result=data.getStringExtra("result");
+        }
+        if (resultCode == Activity.RESULT_CANCELED) {
+            //Write your code if there's no result
+        }
+    }
+}
 }

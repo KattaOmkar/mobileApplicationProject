@@ -1,9 +1,19 @@
 package omkar.com.budgetmanager.data;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Receive {
+
+    @SerializedName("ID")
     private String ID;
+
+    @SerializedName("date")
     private String date;
+
+    @SerializedName("from_reason")
     private String from_reason;
+
+    @SerializedName("amount")
     private String amount;
 
     public String getID() {

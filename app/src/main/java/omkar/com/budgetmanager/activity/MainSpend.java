@@ -1,5 +1,6 @@
 package omkar.com.budgetmanager.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.design.widget.FloatingActionButton;
@@ -50,20 +51,15 @@ public class MainSpend extends AppCompatActivity implements Callback<SpendListRe
         fab_newSpends.setOnClickListener(this);
 
         sTotal = findViewById(R.id.totalSpend);
+
+
+
         fetchSpends();
     }
 
     public void fetchSpends(){
         swipeRefreshLayout.setRefreshing(true);
         apiService.getAllSpends().enqueue(this);
-    }
-
-    @Override
-    public void onResponse(Call<SpendListResponse> call, Response<SpendListResponse> response) {
-        swipeRefreshLayout.setRefreshing(false);
-        spendAdapater.setSpends(response.body().getSpends());
-        spend = response.body().getSpends();
-        total();
     }
 
     public void total(){
@@ -84,6 +80,16 @@ public class MainSpend extends AppCompatActivity implements Callback<SpendListRe
     }
 
     @Override
+    public void onResponse(Call<SpendListResponse> call, Response<SpendListResponse> response) {
+        swipeRefreshLayout.setRefreshing(false);
+        spendAdapater.setSpends(response.body().getSpends());
+        spend = response.body().getSpends();
+        total();
+    }
+
+
+
+    @Override
     public void onFailure(Call<SpendListResponse> call, Throwable t) {
         swipeRefreshLayout.setRefreshing(false);
         t.printStackTrace();
@@ -92,8 +98,8 @@ public class MainSpend extends AppCompatActivity implements Callback<SpendListRe
 
     @Override
     public void onClick(View v) {
-        Intent sp = new Intent(this,NewSpendActivity.class);
-        startActivity(sp);
+        Intent i = new Intent(this, NewSpendActivity.class);
+        startActivityForResult(i, 1);
     }
 
 //    public void setupSpends(){
@@ -113,4 +119,16 @@ public class MainSpend extends AppCompatActivity implements Callback<SpendListRe
 //
 //        spendAdapater.setSpends(spendList);
 //    }
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+    if (requestCode == 1) {
+        if(resultCode == Activity.RESULT_OK){
+            String result=data.getStringExtra("result");
+        }
+        if (resultCode == Activity.RESULT_CANCELED) {
+            //Write your code if there's no result
+        }
+    }
+}
 }
